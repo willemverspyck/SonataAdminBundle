@@ -75,8 +75,8 @@ class BaseFieldDescriptionTest extends TestCase
         $this->assertNull($description->getOption('bar'));
         $this->assertSame('bar', $description->getOption('foo'));
 
-        $description->mergeOptions(['settings' => ['value_1', 'value_2']]);
-        $description->mergeOptions(['settings' => ['value_1', 'value_3']]);
+        $description->mergeOption('settings', ['value_1', 'value_2']);
+        $description->mergeOption('settings', ['value_1', 'value_3']);
 
         $this->assertSame(['value_1', 'value_2', 'value_1', 'value_3'], $description->getOption('settings'));
 
@@ -344,6 +344,19 @@ class BaseFieldDescriptionTest extends TestCase
             ->method('getTranslationDomain');
         $description->setOption('translation_domain', 'ExtensionDomain');
         $this->assertSame('ExtensionDomain', $description->getTranslationDomain());
+    }
+
+    public function testGetTranslationDomainWithFalse(): void
+    {
+        $description = new FieldDescription('name', ['translation_domain' => false]);
+
+        $admin = $this->createMock(AdminInterface::class);
+        $description->setAdmin($admin);
+
+        $admin->expects($this->never())
+            ->method('getTranslationDomain');
+
+        $this->assertFalse($description->getTranslationDomain());
     }
 
     /**

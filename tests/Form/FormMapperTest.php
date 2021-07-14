@@ -235,6 +235,56 @@ class FormMapperTest extends TestCase
         ]], $this->admin->getFormGroups());
     }
 
+    public function testWithFieldsCascadeTranslationDomainFalse(): void
+    {
+        $this->contractor->expects($this->once())
+            ->method('getDefaultOptions')
+            ->willReturn([]);
+
+        $this->formMapper->with('foobar', [
+            'translation_domain' => false,
+        ])
+            ->add('foo', 'bar')
+            ->end();
+
+        $fieldDescription = $this->admin->getFormFieldDescription('foo');
+        $this->assertSame('foo', $fieldDescription->getName());
+        $this->assertSame('bar', $fieldDescription->getType());
+        $this->assertFalse($fieldDescription->getTranslationDomain());
+
+        $this->assertTrue($this->formMapper->has('foo'));
+
+        $this->assertSame(['default' => [
+            'collapsed' => false,
+            'class' => false,
+            'description' => false,
+            'label' => 'default',
+            'translation_domain' => false,
+            'name' => 'default',
+            'box_class' => 'box box-primary',
+            'empty_message' => 'message_form_group_empty',
+            'empty_message_translation_domain' => 'SonataAdminBundle',
+            'auto_created' => true,
+            'groups' => ['foobar'],
+            'tab' => true,
+        ]], $this->admin->getFormTabs());
+
+        $this->assertSame(['foobar' => [
+            'collapsed' => false,
+            'class' => false,
+            'description' => false,
+            'label' => 'foobar',
+            'translation_domain' => false,
+            'name' => 'foobar',
+            'box_class' => 'box box-primary',
+            'empty_message' => 'message_form_group_empty',
+            'empty_message_translation_domain' => 'SonataAdminBundle',
+            'fields' => [
+                'foo' => 'foo',
+            ],
+        ]], $this->admin->getFormGroups());
+    }
+
     /**
      * @doesNotPerformAssertions
      */
@@ -396,6 +446,11 @@ class FormMapperTest extends TestCase
         $this->assertFalse($this->formMapper->has('fooName'));
     }
 
+    /**
+     * NEXT_MAJOR: Remove this test.
+     *
+     * @group legacy
+     */
     public function testAddAcceptFormBuilder(): void
     {
         $formBuilder = $this
@@ -427,6 +482,11 @@ class FormMapperTest extends TestCase
         $this->assertSame($this->formMapper->get('foo'), $formBuilder);
     }
 
+    /**
+     * NEXT_MAJOR: Remove this test.
+     *
+     * @group legacy
+     */
     public function testAddFormBuilderWithType(): void
     {
         $formBuilder = $this

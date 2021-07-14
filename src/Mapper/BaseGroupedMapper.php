@@ -21,6 +21,9 @@ use Sonata\AdminBundle\Admin\AbstractAdmin;
  * This class is used to simulate the Form API.
  *
  * @author Thomas Rabaix <thomas.rabaix@sonata-project.org>
+ *
+ * @phpstan-template T of object
+ * @phpstan-implements MapperInterface<T>
  */
 abstract class BaseGroupedMapper extends BaseMapper implements MapperInterface
 {
@@ -425,7 +428,10 @@ abstract class BaseGroupedMapper extends BaseMapper implements MapperInterface
             $label = $this->getAdmin()->getLabel();
 
             if (null === $label) {
-                $this->with('default', ['auto_created' => true]);
+                $this->with('default', [
+                    'auto_created' => true,
+                    'translation_domain' => null,
+                ]);
             } else {
                 $this->with($label, [
                     'auto_created' => true,
